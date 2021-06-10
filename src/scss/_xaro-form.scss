@@ -1,0 +1,58 @@
+.x-form {
+  &__field {
+    margin-bottom: 15px;
+
+    &--error {
+      color: red;
+    }
+    &--success {
+      color: green;
+    }
+
+    &-error {
+      display: block;
+      opacity: 0;
+      transition-duration: 750ms;
+      transform: translateX(-50px);
+
+      &--show{
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+  }
+  &__error {
+    display: block;
+    opacity: 0;
+    transition-duration: 750ms;
+    color: red;
+    transform: translateX(-50px);
+
+    &--show{
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  &__input {
+    &--text {
+      width: 100%;
+      height: 30px;
+      padding: 0 15px;
+      border: none;
+      border-radius: 0;
+      background-color: rgba(black, 0.1);
+    }
+  }
+  &__input-file {
+    display: block;
+  }
+  &__btns {
+
+  }
+  &__btn {
+
+    &-submit {
+
+    }
+  }
+}
