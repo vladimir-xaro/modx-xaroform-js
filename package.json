@@ -2,10 +2,11 @@
   "name": "@xaro/modx-xaroform-js",
   "version": "0.0.0",
   "description": "",
-  "main": "dist/xaroform.0.0.1-pl.js",
+  "main": "dist/xaroform.js",
   "scripts": {
     "build": "rollup -c",
-    "watch": "rollup -c --watch"
+    "watch": "rollup -c --watch",
+    "release": "dotenv release-it --"
   },
   "keywords": [],
   "author": "",

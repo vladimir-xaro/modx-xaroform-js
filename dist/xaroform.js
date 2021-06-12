@@ -29,8 +29,8 @@ const keys = obj => Object.keys(obj);
 
 class Field {
   constructor(config) {
-    this.errors = {}, this.form = config.form, this.el = config.el, this.inputs = config.inputs, 
-    this.name = config.name, this.type = config.type, this.isMultiple = this.name.includes("[]"), 
+    this.errors = {}, this.form = config.form, this.el = config.el, this.errorsWrapper = this.el.querySelector(".x-form__field-errors") || void 0, 
+    this.inputs = config.inputs, this.name = config.name, this.type = config.type, this.isMultiple = this.name.includes("[]"), 
     this.isFile = "file" === this.type;
   }
   get value() {
@@ -38,7 +38,7 @@ class Field {
     return this.isMultiple ? data.getAll(this.name) : data.get(this.name);
   }
   addError(code, msg, el) {
-    if (this.el.classList.add("x-form__field--error"), !keys(this.errors).includes(code + "")) {
+    if (this.el.classList.add("x-form__field--error"), !keys(this.errors).includes("" + code)) {
       if (!el) {
         const $el = $().create({
           content: msg
@@ -48,7 +48,7 @@ class Field {
       this.errors[code] = {
         msg: msg,
         el: el
-      }, this.el.append(this.errors[code].el), nextTick((() => el.classList.add("x-form__field-error--show")));
+      }, (this.errorsWrapper || this.el).append(this.errors[code].el), nextTick((() => el.classList.add("x-form__field-error--show")));
     }
   }
   removeError(code) {
@@ -215,4 +215,4 @@ XaroForm.EventEmitter = EventEmitter, XaroForm.MicroDOM = MicroDOM, XaroForm.plu
 XaroForm.instances = {}, XaroForm.numbers = 0, XaroForm.customValidators = {};
 
 export default XaroForm;
-//# sourceMappingURL=xaroform.0.0.1-pl.js.map
+//# sourceMappingURL=xaroform.js.map
