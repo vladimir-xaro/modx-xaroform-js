@@ -1,5 +1,5 @@
 export default class RecaptchaV3 {
-  public static g        = grecaptcha;
+  public static g        = window.grecaptcha;
 
   private static _name   ='RecaptchaV3';
   private static _ready  = false;

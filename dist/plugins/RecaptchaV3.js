@@ -38,7 +38,7 @@ class RecaptchaV3 {
   }
 }
 
-RecaptchaV3.g = grecaptcha, RecaptchaV3._name = "RecaptchaV3", RecaptchaV3._ready = !1, 
+RecaptchaV3.g = window.grecaptcha, RecaptchaV3._name = "RecaptchaV3", RecaptchaV3._ready = !1, 
 RecaptchaV3._class = void 0, RecaptchaV3._loaded = !1, RecaptchaV3._queue = [];
 
 export default RecaptchaV3;
