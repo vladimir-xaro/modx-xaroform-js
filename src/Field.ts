@@ -1,7 +1,6 @@
-import {
+import I_Form, {
   Field         as I_Field,
   FieldCtorCfg  as I_FieldConstructorConfig,
-  Form          as I_XaroForm,
   Error         as I_Error,
   InputElement  as I_InputElement
 } from "./types";
@@ -9,7 +8,7 @@ import $, { MicroDOM, nextTick } from "@xaro/micro-dom";
 import { keys } from "./helpers";
 
 export default class Field implements I_Field {
-  form:           I_XaroForm;
+  form:           I_Form;
   el:             HTMLElement;
   errorsWrapper?: HTMLElement
   inputs:         MicroDOM<I_InputElement>;

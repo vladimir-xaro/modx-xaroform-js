@@ -1,5 +1,4 @@
-import {
-  Form          as I_Form,
+import I_Form, {
   FormInitCfg   as I_FormInitCfg,
   FormCtorCfg   as I_FormCtorCfg,
   FormCfg       as I_FormCfg,
