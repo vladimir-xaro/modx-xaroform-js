@@ -5,7 +5,8 @@ import {
   FormCfg       as I_FormCfg,
   Field         as I_Field,
   InputElement  as I_InputElement,
-  FormPlugin    as I_XaroFormPlugin
+  FormPlugin    as I_XaroFormPlugin,
+  FormCtor      as I_FormCtor
 } from './types';
 import EventEmitter from '@xaro/event-emitter';
 import $, { MicroDOM, nextTick } from '@xaro/micro-dom';
@@ -14,7 +15,7 @@ import Validator from './Validator';
 import Field from './Field';
 import { camelToSnake, difference, intersection, keys, snakeToCamel } from './helpers';
 
-const Form = class FormClass implements I_Form {
+const Form: I_FormCtor = class FormClass implements I_Form {
   public static EventEmitter  = EventEmitter;
   public static MicroDOM      = MicroDOM;
 
