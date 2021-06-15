@@ -112,13 +112,13 @@ const Form = ((_a = class FormClass {
     delete FormClass.plugins[name];
   }
   static initialize(config) {
-    if (FormClass.config = config.common, window.XaroFormPlugins) for (const key in window.XaroFormPlugins) FormClass.addPlugin(key, window.XaroFormPlugins[key]);
+    if (FormClass.config = config.common, XaroFormPlugins) for (const key in XaroFormPlugins) FormClass.addPlugin(key, XaroFormPlugins[key]);
     for (const key in config.forms) {
       FormClass.instances[key] = [];
       const forms = $(`${config.forms[key].form_selector}[data-form-key="${key}"]`);
       for (const el of forms) FormClass.instances[key].push(new FormClass(merge(config.forms[key], {
         el: el,
-        on: window.XaroFormEvents || {}
+        on: XaroFormEvents || {}
       }))), FormClass.numbers++;
     }
   }

@@ -1,36 +1,41 @@
-export default {
-  g: (window as any).grecaptcha,
-  _name: 'RecaptchaV3',
-  _ready: false,
-  _class: undefined,
-  _loaded: false,
-  _queue: [],
-  _runQueue() {
+export default class RecaptchaV3 {
+  public g        = grecaptcha;
+
+  private _name   ='RecaptchaV3';
+  private _ready  = false;
+  private _class  = undefined;
+  private _loaded = false;
+  private _queue  = [];
+
+  private _runQueue() {
     for (const form of this._queue) {
       this._generateTokens(form);
     }
-  },
-  _onReady(cb) {
+  };
+  private _onReady(cb) {
     this.g.ready(() => {
       this._ready = true;
       cb();
     });
-  },
-  _execute(form) {
+  };
+
+  private _execute(form) {
     this.g.execute(this._class.config['recaptcha_site'], { action: form.config.recaptcha_action })
     .then(token => {
       form.plugins.config[this._name].input.value = token;
       form.unlockBtns();
     });
-  },
-  _generateTokens(form) {
+  };
+
+  private _generateTokens(form) {
     if (this._ready) {
       this._execute(form);
     } else {
       this._onReady(() => this._execute(form));
     }
-  },
-  init(form) {
+  };
+
+  public init(form) {
     if (! this._class) {
       this._class = form.constructor;
     }
@@ -66,12 +71,13 @@ export default {
     } else {
       this._queue.push(form);
     }
-  },
-  afterSubmit(form, success, errors, side) {
+  };
+
+  public afterSubmit(form, success, errors, side) {
     if (side === 'client') {
       return;
     }
 
     this._generateTokens(form);
   }
-};
+}

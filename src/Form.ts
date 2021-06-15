@@ -4,7 +4,7 @@ import I_Form, {
   FormCfg       as I_FormCfg,
   Field         as I_Field,
   InputElement  as I_InputElement,
-  FormPlugin    as I_XaroFormPlugin,
+  FormPlugin    as I_FormPlugin,
   FormCtor      as I_FormCtor
 } from './types';
 import EventEmitter from '@xaro/event-emitter';
@@ -14,12 +14,15 @@ import Validator from './Validator';
 import Field from './Field';
 import { camelToSnake, difference, intersection, keys, snakeToCamel } from './helpers';
 
+declare var XaroFormPlugins;
+declare var XaroFormEvents;
+
 const Form: I_FormCtor = class FormClass implements I_Form {
   public static EventEmitter  = EventEmitter;
   public static MicroDOM      = MicroDOM;
 
   // object with all registered plugins
-  public static plugins: { [key: string]: I_XaroFormPlugin } = {};
+  public static plugins: { [key: string]: I_FormPlugin } = {};
 
   // all forms instances
   public static instances: { [key: string]: FormClass[] } = {};
@@ -75,7 +78,7 @@ const Form: I_FormCtor = class FormClass implements I_Form {
    * @param name string Plugin's name
    * @param plugin XaroFormPlugin Plugin's object
    */
-  public static addPlugin(name: string, plugin: I_XaroFormPlugin): void {
+  public static addPlugin(name: string, plugin: I_FormPlugin): void {
     FormClass.plugins[name] = plugin;
   }
 
@@ -94,9 +97,9 @@ const Form: I_FormCtor = class FormClass implements I_Form {
   public static initialize(config: I_FormInitCfg): void {
     FormClass.config = config.common;
 
-    if ((window as any).XaroFormPlugins) {
-      for (const key in (window as any).XaroFormPlugins) {
-        FormClass.addPlugin(key, (window as any).XaroFormPlugins[key]);
+    if (XaroFormPlugins) {
+      for (const key in XaroFormPlugins) {
+        FormClass.addPlugin(key, XaroFormPlugins[key]);
       }
     }
 
@@ -107,7 +110,7 @@ const Form: I_FormCtor = class FormClass implements I_Form {
         FormClass.instances[key].push(
           new FormClass(merge(config.forms[key], {
             el,
-            on: (window as any).XaroFormEvents || {}
+            on: XaroFormEvents || {}
           }))
         );
         FormClass.numbers++;
