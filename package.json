@@ -1,6 +1,6 @@
 {
   "name": "@xaro/modx-xaroform-js",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "For MODX Extension XaroForm v.0.0.1",
   "main": "dist/xaroform.js",
   "scripts": {
