@@ -65,17 +65,19 @@ export default class Form {
   errors: {
     [field_key: string]: {
       [code: string]: {
-        msg: string,
-        el?: HTMLElement
+        msg: string;
+        el?: HTMLElement;
       }
     }
   };
 
   // plugins for current instance
   plugins: {
-    list: string[],
-    config: {}
+    list: string[];
+    config: {};
   };
+
+  constructor(config: FormCtorCfg);
 
   runPlugins(method: string, ...args): void;
   validate(): {

@@ -46,7 +46,7 @@ export interface FormCtor {
 }
 
 // XaroForm
-export interface Form {
+export default class Form {
   emitter: EventEmitter;
 
   // current form config
@@ -76,6 +76,8 @@ export interface Form {
     list: string[],
     config: {}
   };
+
+  constructor(config: FormCtorCfg);
 
   runPlugins(method: string, ...args): void;
   validate(): {
