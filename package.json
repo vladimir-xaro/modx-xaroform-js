@@ -1,7 +1,7 @@
 {
   "name": "@xaro/modx-xaroform-js",
   "version": "0.0.1",
-  "description": "",
+  "description": "For MODX Extension XaroForm v.0.0.1",
   "main": "dist/xaroform.js",
   "scripts": {
     "build": "rollup -c",
@@ -23,8 +23,14 @@
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^13.0.0",
     "@rollup/plugin-typescript": "^8.2.1",
+    "@xaro/helpers": "^0.0.2",
     "deepmerge": "^4.2.2",
     "rollup-plugin-multi-input": "^1.3.0",
     "typescript": "^4.2.4"
+  },
+  "release-it": {
+    "github": {
+      "release": true
+    }
   }
 }

@@ -2,6 +2,8 @@ import EventEmitter from "@xaro/event-emitter";
 
 import $, { nextTick, MicroDOM } from "@xaro/micro-dom";
 
+import { merge } from "@xaro/helpers";
+
 class Validator {
   static required(field) {
     if (field.isMultiple) return !!field.value.length;
@@ -37,6 +39,9 @@ class Field {
     const data = new FormData(this.form.config.el);
     return this.isMultiple ? data.getAll(this.name) : data.get(this.name);
   }
+  clearValue() {
+    this.isMultiple ? this.inputs.forEach((input => input.checked = !1)) : this.inputs.forEach((input => input.value = ""));
+  }
   addError(code, msg, el) {
     if (this.el.classList.add("x-form__field--error"), !keys(this.errors).includes("" + code)) {
       if (!el) {
@@ -61,7 +66,9 @@ class Field {
   }
 }
 
-class XaroForm {
+var _a;
+
+const Form = ((_a = class FormClass {
   constructor(config) {
     this.fields = {}, this.btns = {}, this.errors = {}, this.plugins = {
       list: [],
@@ -86,11 +93,11 @@ class XaroForm {
       type ? type in this.btns ? this.btns[type].push(btn) : this.btns[type] = [ btn ] : (this.btns["undefined_" + btn_i] = [ btn ], 
       btn_i++);
     }
-    this.lockBtns();
+    this.config.lockBtns && this.lockBtns();
     const errorsEl = $(this.config.el).get(".x-form__errors");
     this.errorsEl = errorsEl.length ? errorsEl[0] : void 0, this.config.el.addEventListener("submit", (e => (e.preventDefault(), 
     this.submit(), !1)));
-    const pluginKeys = keys(XaroForm.plugins);
+    const pluginKeys = keys(FormClass.plugins);
     if (this.config.plugins) {
       let plugins = [];
       for (let i = 0; i < this.config.plugins.length; i++) pluginKeys.includes(this.config.plugins[i]) && plugins.push(this.config.plugins[i]);
@@ -99,24 +106,24 @@ class XaroForm {
     this.runPlugins("init", this), this.emitter.emit("init", this);
   }
   static addPlugin(name, plugin) {
-    XaroForm.plugins[name] = plugin;
+    FormClass.plugins[name] = plugin;
   }
   static removePlugin(name) {
-    delete XaroForm.plugins[name];
+    delete FormClass.plugins[name];
   }
   static initialize(config) {
-    if (XaroForm.config = config.common, window.XaroFormPlugins) for (const key in window.XaroFormPlugins) XaroForm.addPlugin(key, window.XaroFormPlugins[key]);
+    if (FormClass.config = config.common, window.XaroFormPlugins) for (const key in window.XaroFormPlugins) FormClass.addPlugin(key, window.XaroFormPlugins[key]);
     for (const key in config.forms) {
-      XaroForm.instances[key] = [];
+      FormClass.instances[key] = [];
       const forms = $(`${config.forms[key].form_selector}[data-form-key="${key}"]`);
-      for (const el of forms) XaroForm.instances[key].push(new XaroForm(Object.assign({}, config.forms[key], {
+      for (const el of forms) FormClass.instances[key].push(new FormClass(merge(config.forms[key], {
         el: el,
         on: window.XaroFormEvents || {}
-      }))), XaroForm.numbers++;
+      }))), FormClass.numbers++;
     }
   }
   runPlugins(method, ...args) {
-    for (const key of this.plugins.list) method in XaroForm.plugins[key] && XaroForm.plugins[key][method](this, ...args);
+    for (const key of this.plugins.list) method in FormClass.plugins[key] && FormClass.plugins[key][method](this, ...args);
   }
   validate() {
     const rules = this.parseRules();
@@ -127,7 +134,7 @@ class XaroForm {
     }
     let errors = {};
     for (const field in codes) for (const code in codes[field]) {
-      const _code = code.replace(/[A-Z]/g, (char => "_" + char.toLowerCase())), msg = this.config.lexicon && this.config.lexicon[_code] ? this.config.lexicon.errors[_code] : XaroForm.config.lexicon.errors[_code];
+      const _code = code.replace(/[A-Z]/g, (char => "_" + char.toLowerCase())), msg = this.config.lexicon && this.config.lexicon[_code] ? this.config.lexicon.errors[_code] : FormClass.config.lexicon.errors[_code];
       void 0 === errors[field] && (errors[field] = {}), errors[field][_code] = msg.replace("$", codes[field][code] || "");
     }
     return {
@@ -209,10 +216,11 @@ class XaroForm {
   unlockBtns() {
     this.changeDisabledAttr(!1);
   }
-}
+  reset() {
+    this.config.el.reset();
+  }
+}).EventEmitter = EventEmitter, _a.MicroDOM = MicroDOM, _a.plugins = {}, _a.instances = {}, 
+_a.numbers = 0, _a.customValidators = {}, _a);
 
-XaroForm.EventEmitter = EventEmitter, XaroForm.MicroDOM = MicroDOM, XaroForm.plugins = {}, 
-XaroForm.instances = {}, XaroForm.numbers = 0, XaroForm.customValidators = {};
-
-export default XaroForm;
+export default Form;
 //# sourceMappingURL=xaroform.js.map

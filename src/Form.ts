@@ -1,19 +1,28 @@
+import {
+  Form          as I_Form,
+  FormInitCfg   as I_FormInitCfg,
+  FormCtorCfg   as I_FormCtorCfg,
+  FormCfg       as I_FormCfg,
+  Field         as I_Field,
+  InputElement  as I_InputElement,
+  FormPlugin    as I_XaroFormPlugin
+} from './types';
 import EventEmitter from '@xaro/event-emitter';
 import $, { MicroDOM, nextTick } from '@xaro/micro-dom';
-import { I_XaroForm, I_XaroFormInitializeConfig, I_XaroFormConstructorConfig, I_XaroFormConfig, I_Field, InputElement, XaroFormPlugin  } from './types';
+import { merge } from '@xaro/helpers';
 import Validator from './Validator';
 import Field from './Field';
 import { camelToSnake, difference, intersection, keys, snakeToCamel } from './helpers';
 
-export default class XaroForm implements I_XaroForm {
+const Form = class FormClass implements I_Form {
   public static EventEmitter  = EventEmitter;
   public static MicroDOM      = MicroDOM;
 
   // object with all registered plugins
-  public static plugins: { [key: string]: XaroFormPlugin } = {};
+  public static plugins: { [key: string]: I_XaroFormPlugin } = {};
 
   // all forms instances
-  public static instances: { [key: string]: XaroForm[] } = {};
+  public static instances: { [key: string]: FormClass[] } = {};
 
   // forms amount
   public static numbers: number = 0;
@@ -31,7 +40,7 @@ export default class XaroForm implements I_XaroForm {
   public emitter: EventEmitter;
 
   // current form config
-  public config: I_XaroFormConfig;
+  public config: I_FormCfg;
 
   // fields elements with inputs
   public fields: { [key: string]: I_Field } = {};
@@ -66,8 +75,8 @@ export default class XaroForm implements I_XaroForm {
    * @param name string Plugin's name
    * @param plugin XaroFormPlugin Plugin's object
    */
-  public static addPlugin(name: string, plugin: XaroFormPlugin): void {
-    XaroForm.plugins[name] = plugin;
+  public static addPlugin(name: string, plugin: I_XaroFormPlugin): void {
+    FormClass.plugins[name] = plugin;
   }
 
   /**
@@ -75,44 +84,44 @@ export default class XaroForm implements I_XaroForm {
    * @param name string Plugin's name
    */
   public static removePlugin(name: string): void {
-    delete XaroForm.plugins[name];
+    delete FormClass.plugins[name];
   }
 
   /**
    * Initialize all forms from config
    * @param config I_XaroFormInitializeConfig
    */
-  public static initialize(config: I_XaroFormInitializeConfig): void {
-    XaroForm.config = config.common;
+  public static initialize(config: I_FormInitCfg): void {
+    FormClass.config = config.common;
 
     if ((window as any).XaroFormPlugins) {
       for (const key in (window as any).XaroFormPlugins) {
-        XaroForm.addPlugin(key, (window as any).XaroFormPlugins[key]);
+        FormClass.addPlugin(key, (window as any).XaroFormPlugins[key]);
       }
     }
 
     for (const key in config.forms) {
-      XaroForm.instances[key] = [];
+      FormClass.instances[key] = [];
       const forms: MicroDOM<HTMLFormElement> = $(`${config.forms[key]['form_selector']}[data-form-key="${key}"]`);
       for (const el of forms) {
-        XaroForm.instances[key].push(new XaroForm(Object.assign({}, config.forms[key], {
-          el,
-          on: (window as any).XaroFormEvents || {}
-        })));
-        XaroForm.numbers++;
+        FormClass.instances[key].push(
+          new FormClass(merge(config.forms[key], {
+            el,
+            on: (window as any).XaroFormEvents || {}
+          }))
+        );
+        FormClass.numbers++;
       }
     }
-
-    // console.log(config, XaroForm.instances);
   }
 
-  constructor(config: I_XaroFormConstructorConfig) {
+  constructor(config: I_FormCtorCfg) {
     this.emitter = new EventEmitter(config.on);
     this.config = config;
 
     // Fields
     for (const el of $(this.config.el).get<HTMLElement>('.x-form__field')) {
-      const inputs: MicroDOM<InputElement> = $(el).get<InputElement>('.x-form__input');
+      const inputs: MicroDOM<I_InputElement> = $(el).get<I_InputElement>('.x-form__input');
 
       if (! inputs.length) {
         throw new Error("Field element has not contains input element/s");
@@ -148,7 +157,9 @@ export default class XaroForm implements I_XaroForm {
         btn_i++;
       }
     }
-    this.lockBtns();
+    if (this.config.lockBtns) {
+      this.lockBtns();
+    }
 
     // Common errors wrapper el
     const errorsEl = $(this.config.el).get<HTMLElement>('.x-form__errors');
@@ -165,7 +176,7 @@ export default class XaroForm implements I_XaroForm {
 
 
     // plugins
-    const pluginKeys = keys(XaroForm.plugins);
+    const pluginKeys = keys(FormClass.plugins);
     if (this.config.plugins) {
       let plugins: string[] = [];
       for (let i = 0; i < this.config.plugins.length; i++) {
@@ -182,12 +193,11 @@ export default class XaroForm implements I_XaroForm {
 
   public runPlugins(method: string, ...args): void {
     for (const key of this.plugins.list) {
-      if (method in XaroForm.plugins[key]) {
-        XaroForm.plugins[key][method](this, ...args);
+      if (method in FormClass.plugins[key]) {
+        FormClass.plugins[key][method](this, ...args);
       }
     }
   }
-
 
   public validate() {
     const rules = this.parseRules();
@@ -213,7 +223,7 @@ export default class XaroForm implements I_XaroForm {
         const _code = camelToSnake(code);
         const msg = this.config.lexicon && this.config.lexicon[_code]
           ? this.config.lexicon.errors[_code]
-          : XaroForm.config.lexicon.errors[_code];
+          : FormClass.config.lexicon.errors[_code];
 
         if (typeof errors[field] === 'undefined') {
           errors[field] = {};
@@ -406,4 +416,10 @@ export default class XaroForm implements I_XaroForm {
   unlockBtns(): void {
     this.changeDisabledAttr(false);
   }
+
+  reset(): void {
+    this.config.el.reset();
+  }
 }
+
+export default Form;

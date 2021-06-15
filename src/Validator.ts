@@ -1,4 +1,4 @@
-import { I_Field } from "./types";
+import { Field as I_Field } from "./types";
 
 export default class Validator {
   public static required(field: I_Field) : boolean {

@@ -1,4 +1,10 @@
-import { I_Field, I_FieldConstructorConfig, I_XaroForm, I_Error, InputElement } from "./types";
+import {
+  Field         as I_Field,
+  FieldCtorCfg  as I_FieldConstructorConfig,
+  Form          as I_XaroForm,
+  Error         as I_Error,
+  InputElement  as I_InputElement
+} from "./types";
 import $, { MicroDOM, nextTick } from "@xaro/micro-dom";
 import { keys } from "./helpers";
 
@@ -6,7 +12,7 @@ export default class Field implements I_Field {
   form:           I_XaroForm;
   el:             HTMLElement;
   errorsWrapper?: HTMLElement
-  inputs:         MicroDOM<InputElement>;
+  inputs:         MicroDOM<I_InputElement>;
   subInputs?:     MicroDOM<HTMLOptionElement>;
   errors:       {
     [code: string]: {
@@ -37,7 +43,15 @@ export default class Field implements I_Field {
     return this.isMultiple ? data.getAll(this.name) : data.get(this.name);
   }
 
-  public addError(code: string|number, msg: string, el?: HTMLElement) : void {
+  public clearValue(): void {
+    if (this.isMultiple) {
+      this.inputs.forEach(input => (input as HTMLInputElement).checked = false);
+    } else {
+      this.inputs.forEach(input => input.value = '');
+    }
+  }
+
+  public addError(code: string|number, msg: string, el?: HTMLElement): void {
     this.el.classList.add('x-form__field--error');
 
     if (! keys(this.errors).includes('' + code)) {

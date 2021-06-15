@@ -1,3 +1,3 @@
-import XaroForm from './XaroForm';
+import Form from './Form';
 
-export default XaroForm;
+export default Form;
