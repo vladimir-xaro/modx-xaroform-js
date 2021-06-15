@@ -5,48 +5,48 @@ import { MicroDOM } from "@xaro/micro-dom";
 export type InputElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
 export interface FormCtor {
+  new(config: FormCtorCfg);
+}
+
+// XaroForm
+export default class Form {
   // object with all registered plugins
-  plugins: { [key: string]: FormPlugin };
+  static plugins: { [key: string]: FormPlugin };
 
   // all forms instances
-  instances: { [key: string]: Form[] };
+  static instances: { [key: string]: Form[] };
 
   // forms amount
-  numbers: number;
+  static numbers: number;
 
   // common forms config
-  config: {
+  static config: {
     lexicon: { [key: string]: string };
     [key: string]: any;
   };
 
   // custom validators
-  customValidators: { [key: string]: Function };
+  static customValidators: { [key: string]: Function };
 
   /**
    * Registers plugin for XaroForm
    * @param name string Plugin's name
    * @param plugin XaroFormPlugin Plugin's object
    */
-  addPlugin(name: string, plugin: FormPlugin): void;
+  static addPlugin(name: string, plugin: FormPlugin): void;
 
   /**
    * Removes plugin by name
    * @param name string Plugin's name
    */
-  removePlugin(name: string): void;
+  static removePlugin(name: string): void;
 
   /**
    * Initialize all forms from config
    * @param config I_XaroFormInitializeConfig
    */
-  initialize(config: FormInitCfg): void;
+  static initialize(config: FormInitCfg): void;
 
-  new(config: FormCtorCfg);
-}
-
-// XaroForm
-export default class Form {
   emitter: EventEmitter;
 
   // current form config
@@ -65,16 +65,16 @@ export default class Form {
   errors: {
     [field_key: string]: {
       [code: string]: {
-        msg: string;
-        el?: HTMLElement;
+        msg: string,
+        el?: HTMLElement
       }
     }
   };
 
   // plugins for current instance
   plugins: {
-    list: string[];
-    config: {};
+    list: string[],
+    config: {}
   };
 
   constructor(config: FormCtorCfg);
